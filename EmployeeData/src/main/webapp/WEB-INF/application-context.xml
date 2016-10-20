@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+	   ">
+	   
+	<context:component-scan
+		base-package="com.spring.employee.app.service,com.spring.employee.app.dao"
+		use-default-filters="false">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Service" />
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Repository" />
+	</context:component-scan>
+	
+	<util:properties id="hibernateProp" location="classpath:Hibernate.properties"></util:properties>
+	
+	<context:property-placeholder location="classpath:Database.properties"/>
+	
+	<bean id="dataSource" 
+	class="org.apache.tomcat.jdbc.pool.DataSource"
+	p:driverClassName="${database.driver}"
+	p:url="${database.url}"
+	p:username="${database.username}"
+	p:password="${database.password}"
+	p:maxActive="50"
+	p:maxIdle="50"
+	/>
+	
+	<bean id="sessionFactory" 
+	class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"
+	p:dataSource-ref="dataSource"
+	p:packagesToScan="com.spring.employee.app.entity"
+	p:hibernateProperties-ref="hibernateProp" />
+	
+	<bean id="transactionManager" 
+	class="org.springframework.orm.hibernate4.HibernateTransactionManager"
+	p:sessionFactory-ref="sessionFactory" />
+</beans>
